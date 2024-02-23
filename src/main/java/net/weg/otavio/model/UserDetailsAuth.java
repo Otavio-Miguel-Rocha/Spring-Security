@@ -5,25 +5,24 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
-@RequiredArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-@Entity
+@Builder
+@Entity(name = "tb_user_details")
 public class UserDetailsAuth implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @NonNull
+    @OneToOne(mappedBy = "userDetailsAuth")
     @JsonIgnore
-    private final User user;
+    private User user;
 
     @Email
     @Column(unique = true, nullable = false, updatable = false)
@@ -35,8 +34,7 @@ public class UserDetailsAuth implements UserDetails {
 
     private boolean enabled;
 
-    @OneToMany(mappedBy = "userDetailsAuth")
-    private List<Authorization> authorities;
+    private Collection<Authorization> authorities;
 
     private boolean accountNonExpired;
     private boolean accountNonLocked;

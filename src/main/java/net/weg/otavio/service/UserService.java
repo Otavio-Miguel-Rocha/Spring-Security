@@ -26,7 +26,7 @@ public class UserService {
         User finalUser = new User();
         mapper.map(user, finalUser);
         //The account will always be true when it is created
-        finalUser.setIsActive(true);
+//        finalUser.setIsActive(true);
         return save(finalUser);
     }
 
@@ -50,13 +50,13 @@ public class UserService {
 
     public void editPassword(UserPasswordDTO userPasswordDTO) {
         User user = findById(userPasswordDTO.getId());
-        user.setPassword(userPasswordDTO.getPassword());
+//        user.setPassword(userPasswordDTO.getPassword());
         save(user);
     }
 
     public void editActiveAccount(Long userID) {
         User user = findById(userID);
-        user.setIsActive(!user.getIsActive());
+//        user.setIsActive(!user.getIsActive());
         save(user);
     }
 

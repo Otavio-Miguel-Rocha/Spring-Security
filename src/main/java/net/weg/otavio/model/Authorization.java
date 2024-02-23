@@ -1,5 +1,6 @@
 package net.weg.otavio.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,22 +8,17 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-@Entity
 @AllArgsConstructor
-@Data
-@NoArgsConstructor
-public class Authorization implements GrantedAuthority {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public enum Authorization implements GrantedAuthority {
+    GET("Get"),
+    POST("Post"),
+    PUT("Put"),
+    DELETE("Delete");
 
-    private String name;
-
-    @ManyToOne
-    private UserDetailsAuth userDetailsAuth;
+    private final String name;
 
     @Override
     public String getAuthority() {
-        return name;
+        return name();
     }
 }

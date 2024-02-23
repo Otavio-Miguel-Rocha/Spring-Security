@@ -19,7 +19,7 @@ public class User {
 
     private Integer age;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private UserDetailsAuth userDetailsAuth;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
