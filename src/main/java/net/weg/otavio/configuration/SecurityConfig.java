@@ -33,7 +33,11 @@ public class SecurityConfig{
                 // has Authority
                 // has Any Authority
                 // block all requests and make the only necessaries method
-                .requestMatchers(HttpMethod.GET, "/teste").permitAll()
+                .requestMatchers(HttpMethod.GET, "/teste").hasAuthority("PUT")
+
+                //Solicita autenticação a todas as requisições, exceto aquelas que foram personalizadas
+                //Tratando-se de segurança, é melhor bloquear tudo e apontar aquilo que é permitido
+                //Do que permitir tudo e apontar aquilo que é bloqueado
                 .anyRequest().authenticated()
         );
         //Definição de security context

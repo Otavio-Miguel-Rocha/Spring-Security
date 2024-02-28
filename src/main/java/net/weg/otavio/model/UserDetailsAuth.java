@@ -29,7 +29,6 @@ public class UserDetailsAuth implements UserDetails {
     private String email;
 
     @Column(nullable = false)
-    @Length(min = 6, max = 14)
     private String password;
 
     private boolean enabled;

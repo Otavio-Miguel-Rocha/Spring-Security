@@ -9,7 +9,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 
@@ -33,9 +36,19 @@ public class BeanConfigs {
     public AuthenticationManager authenticationManager() throws Exception {
         //Forma de autenticação através do userDetailsService e do passwordEncoder
         DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
-        dao.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+//        dao.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
         dao.setUserDetailsService(authenticationService);
         return new ProviderManager(dao);
+    }
+
+//    @Bean
+//    public UserDetailsService userDetailsService(){
+//        return authenticationService;
+//    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 
 }
