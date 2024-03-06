@@ -42,7 +42,6 @@ public class SecurityConfig{
         );
         //Definição de security context
         http.securityContext((context) -> context.securityContextRepository(securityContextRepository));
-
         http.formLogin(Customizer.withDefaults());
         http.logout(Customizer.withDefaults());
         return http.build();
