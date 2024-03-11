@@ -1,10 +1,7 @@
 package net.weg.otavio.configuration;
 
 
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
@@ -23,15 +20,15 @@ public class JwtUtil {
                 .compact();
     }
 
-    public void validateToken(String token){
-        getParser().parseSignedClaims(token);
+    private Jws<Claims> validateToken(String token){
+        return getParser().parseSignedClaims(token);
     }
 
-    public JwtParser getParser(){
+    private JwtParser getParser(){
         return Jwts.parser().setSigningKey("WEG").build();
     }
 
     public String getUsername(String token) {
-        return getParser().parseSignedClaims(token).getPayload().getSubject();
+        return validateToken(token).getPayload().getSubject();
     }
 }
