@@ -30,24 +30,25 @@ public class FilterAuthentication extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        //Get the JWT Cookie from request and the value
-        Cookie cookie = cookieUtil.getCookie(request, "JWT");
-        String token = cookie.getValue();
+        if(!isPublicRouter(request)){
+            //Get the JWT Cookie from request and the value
+            Cookie cookie = cookieUtil.getCookie(request, "JWT");
+            String token = cookie.getValue();
 
-        //Validates the token and creation of authenticate user
-        String email = jwtUtil.getUsername(token);
-        UserDetails userDetails = authenticationService.loadUserByUsername(email);
-        Authentication authentication =
-                new UsernamePasswordAuthenticationToken(
-                userDetails,
-                userDetails.getPassword(),
-                userDetails.getAuthorities());
+            //Validates the token and creation of authenticate user
+            String email = jwtUtil.getUsername(token);
+            UserDetails userDetails = authenticationService.loadUserByUsername(email);
+            Authentication authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            userDetails.getPassword(),
+                            userDetails.getAuthorities());
 
-        //Save this temporarily in the Security Context
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authentication);
-        securityContextRepository.saveContext(context, request, response);
-
+            //Save this temporarily in the Security Context
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            securityContextRepository.saveContext(context, request, response);
+        }
         //Literally do the filter
         filterChain.doFilter(request, response);
     }

@@ -12,8 +12,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 
@@ -21,7 +23,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 @AllArgsConstructor
 public class SecurityConfig{
     private final SecurityContextRepository securityContextRepository;
-
+    private final FilterAuthentication filterAuthentication;
     @Bean
     public SecurityFilterChain config(HttpSecurity http) throws Exception {
         //CSRF - Cross Site Request Forgeries
@@ -41,10 +43,18 @@ public class SecurityConfig{
                 .anyRequest().authenticated()
         );
         //Definição de security context
-        http.securityContext((context) -> context.securityContextRepository(securityContextRepository));
+//        http.securityContext((context) -> context.securityContextRepository(securityContextRepository));
+
+        //Configura a sessão para existir apenas durante a requisição, utilizando o JWT dos cookies sempre
+        //Sem persistência de autenticação
+        http.sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        //Faz com que o filtro entra na lista de filtro de autenticação
+        http.addFilterBefore(filterAuthentication, UsernamePasswordAuthenticationFilter.class);
+
         http.formLogin(Customizer.withDefaults());
         http.logout(Customizer.withDefaults());
         return http.build();
     }
+
 
 }

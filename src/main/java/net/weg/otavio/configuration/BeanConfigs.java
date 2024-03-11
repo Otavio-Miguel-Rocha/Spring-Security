@@ -12,6 +12,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @AllArgsConstructor
@@ -54,5 +58,16 @@ public class BeanConfigs {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setSkipNullEnabled(true);
         return mapper;
+    }
+
+
+    @Bean
+    public CorsConfigurationSource corsConfig(){
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.setAllowedOrigins(List.of("http://localhost:4200"));
+        cors.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "GET"));
+        //Funcionamento dos Cookies
+        cors.setAllowCredentials(true);
+
     }
 }
