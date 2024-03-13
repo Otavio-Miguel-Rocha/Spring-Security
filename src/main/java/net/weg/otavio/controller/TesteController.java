@@ -24,7 +24,6 @@ public class TesteController {
 
     @GetMapping
     public String teste(){
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return "Teste";
     }
 

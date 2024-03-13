@@ -1,4 +1,4 @@
-package net.weg.otavio.configuration;
+package net.weg.otavio.security;
 
 
 import jakarta.servlet.FilterChain;
@@ -7,7 +7,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import net.weg.otavio.service.AuthenticationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,21 +19,28 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @AllArgsConstructor
 @Component
 public class FilterAuthentication extends OncePerRequestFilter {
 
-    private final CookieUtil cookieUtil = new CookieUtil();
-    private final JwtUtil jwtUtil = new JwtUtil();
+    @Autowired
+    private final Environment environment;
     private final AuthenticationService authenticationService;
     private final SecurityContextRepository securityContextRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        JwtUtil jwtUtil = new JwtUtil(environment);
+        CookieUtil cookieUtil = new CookieUtil(environment);
         if(!isPublicRouter(request)){
             //Get the JWT Cookie from request and the value
             Cookie cookie = cookieUtil.getCookie(request, "JWT");
+            System.out.println("Chegou Do Filter" + cookie);
+            if(cookie == null){
+                return;
+            }
             String token = cookie.getValue();
 
             //Validates the token and creation of authenticate user
@@ -55,6 +63,6 @@ public class FilterAuthentication extends OncePerRequestFilter {
 
     private boolean isPublicRouter(HttpServletRequest request){
         return request.getRequestURI().equals("/login")
-                && request.getMethod().equals("POST");
+                && (request.getMethod().equals("POST") || request.getMethod().equals("GET"));
     }
 }

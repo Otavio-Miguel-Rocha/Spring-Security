@@ -1,4 +1,4 @@
-package net.weg.otavio.service;
+package net.weg.otavio.security;
 
 import lombok.AllArgsConstructor;
 import net.weg.otavio.model.User;

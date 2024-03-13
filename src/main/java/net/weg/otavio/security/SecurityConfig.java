@@ -1,22 +1,15 @@
-package net.weg.otavio.configuration;
+package net.weg.otavio.security;
 
 import lombok.AllArgsConstructor;
-import net.weg.otavio.service.AuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 
 @Configuration
@@ -37,6 +30,9 @@ public class SecurityConfig{
                 // block all requests and make the only necessaries method
                 .requestMatchers(HttpMethod.GET, "/teste").hasAuthority("PUT")
 
+                //Allows the login post to everyone
+                .requestMatchers(HttpMethod.POST, "/login").permitAll()
+
                 //Solicita autenticação a todas as requisições, exceto aquelas que foram personalizadas
                 //Tratando-se de segurança, é melhor bloquear tudo e apontar aquilo que é permitido
                 //Do que permitir tudo e apontar aquilo que é bloqueado
@@ -51,8 +47,8 @@ public class SecurityConfig{
         //Faz com que o filtro entra na lista de filtro de autenticação
         http.addFilterBefore(filterAuthentication, UsernamePasswordAuthenticationFilter.class);
 
-        http.formLogin(Customizer.withDefaults());
-        http.logout(Customizer.withDefaults());
+        http.formLogin(AbstractHttpConfigurer::disable);
+        http.logout(AbstractHttpConfigurer::disable);
         return http.build();
     }
 

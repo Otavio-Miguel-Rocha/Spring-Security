@@ -30,13 +30,12 @@ public class UserDetailsAuth implements UserDetails {
 
     @Column(nullable = false)
     private String password;
-    private boolean enabled;
 
+    private boolean enabled;
     private Collection<Authorization> authorities;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
-
     @Override
     public String getUsername() {
         return this.email;

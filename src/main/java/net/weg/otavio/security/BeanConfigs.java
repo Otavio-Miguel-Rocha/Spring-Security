@@ -1,10 +1,11 @@
-package net.weg.otavio.configuration;
+package net.weg.otavio.security;
 
 import lombok.AllArgsConstructor;
-import net.weg.otavio.service.AuthenticationService;
+import net.weg.otavio.security.AuthenticationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -14,6 +15,7 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
@@ -37,21 +39,10 @@ public class BeanConfigs {
     public AuthenticationManager authenticationManager() {
         //Forma de autenticação através do userDetailsService e do passwordEncoder
         DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
-//        dao.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+        dao.setPasswordEncoder(new BCryptPasswordEncoder());
         dao.setUserDetailsService(authenticationService);
         return new ProviderManager(dao);
     }
-
-//    @Bean
-//    public UserDetailsService userDetailsService(){
-//        return authenticationService;
-//    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
 
     @Bean
     public ModelMapper modelMapper(){
@@ -69,5 +60,13 @@ public class BeanConfigs {
         //Funcionamento dos Cookies
         cors.setAllowCredentials(true);
 
+        cors.setExposedHeaders(List.of("*"));
+
+        UrlBasedCorsConfigurationSource corsConfigurationSource =
+                new UrlBasedCorsConfigurationSource();
+        // "/**" allows multiples names after the / for example -> /task/property/2
+        corsConfigurationSource.registerCorsConfiguration("/**", cors);
+        return corsConfigurationSource;
     }
+
 }
