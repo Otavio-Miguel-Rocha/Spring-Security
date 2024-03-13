@@ -21,6 +21,7 @@ public class AuthenticationService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> userOptional = userRepository.findByUserDetailsAuth_Email(email);
         if(userOptional.isPresent()){
+            System.out.println("Is presente " + userOptional.get());
             return userOptional.get().getUserDetailsAuth();
         }
         throw new UsernameNotFoundException("Invalidated Data");

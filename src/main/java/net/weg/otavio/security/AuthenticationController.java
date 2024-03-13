@@ -49,4 +49,18 @@ public class AuthenticationController {
             return new ResponseEntity<>("Falha na autenticação!", HttpStatus.UNAUTHORIZED);
         }
     }
+
+    //Seta cookie com tempo "0" excluindo ele do navegador do usuário
+    @PostMapping("/logout")
+    public void logout(HttpServletRequest request, HttpServletResponse response){
+        CookieUtil cookieUtil = null;
+        try {
+            cookieUtil = new CookieUtil(environment);
+            Cookie cookie = cookieUtil.getCookie(request, "JWT");
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        } catch (Exception e) {
+            response.setStatus(401);
+        }
+    }
 }

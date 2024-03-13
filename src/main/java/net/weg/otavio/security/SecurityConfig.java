@@ -15,20 +15,21 @@ import org.springframework.security.web.context.SecurityContextRepository;
 @Configuration
 @AllArgsConstructor
 public class SecurityConfig{
-    private final SecurityContextRepository securityContextRepository;
+
     private final FilterAuthentication filterAuthentication;
+    private final SecurityContextRepository securityRepository;
     @Bean
     public SecurityFilterChain config(HttpSecurity http) throws Exception {
         //CSRF - Cross Site Request Forgeries
-
         http.csrf(AbstractHttpConfigurer::disable);
+
         http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
                 // permit all makes that everyone can make a request
                 // authenticated
                 // has Authority
                 // has Any Authority
                 // block all requests and make the only necessaries method
-                .requestMatchers(HttpMethod.GET, "/teste").hasAuthority("PUT")
+                .requestMatchers(HttpMethod.GET, "/teste").hasAuthority("GET")
 
                 //Allows the login post to everyone
                 .requestMatchers(HttpMethod.POST, "/login").permitAll()
@@ -38,15 +39,18 @@ public class SecurityConfig{
                 //Do que permitir tudo e apontar aquilo que é bloqueado
                 .anyRequest().authenticated()
         );
+
         //Definição de security context
-//        http.securityContext((context) -> context.securityContextRepository(securityContextRepository));
+        http.securityContext((context) -> context.securityContextRepository(securityRepository));
 
         //Configura a sessão para existir apenas durante a requisição, utilizando o JWT dos cookies sempre
         //Sem persistência de autenticação
         http.sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         //Faz com que o filtro entra na lista de filtro de autenticação
         http.addFilterBefore(filterAuthentication, UsernamePasswordAuthenticationFilter.class);
 
+        //Desativa login
         http.formLogin(AbstractHttpConfigurer::disable);
         http.logout(AbstractHttpConfigurer::disable);
         return http.build();

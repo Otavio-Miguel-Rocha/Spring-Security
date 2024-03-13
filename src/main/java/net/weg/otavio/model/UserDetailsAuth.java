@@ -22,6 +22,7 @@ public class UserDetailsAuth implements UserDetails {
 
     @OneToOne(mappedBy = "userDetailsAuth")
     @JsonIgnore
+    @ToString.Exclude
     private User user;
 
     @Email

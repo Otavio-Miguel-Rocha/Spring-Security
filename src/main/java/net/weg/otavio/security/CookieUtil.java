@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
@@ -27,6 +28,10 @@ public class CookieUtil {
     }
 
     public Cookie getCookie(HttpServletRequest request, String name){
-        return WebUtils.getCookie(request, name);
+        Cookie cookie = WebUtils.getCookie(request, name);
+        if(cookie != null){
+            return cookie;
+        }
+        throw new AuthenticationCredentialsNotFoundException("Usuário não autenticado");
     }
 }
